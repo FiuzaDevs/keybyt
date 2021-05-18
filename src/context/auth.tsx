@@ -22,7 +22,7 @@ export function AuthProvider({ children }: any) {
     return supabase.auth.signOut();
   }
 
-  function addPlayer(username: string, lastname: string) {
+  function addUser(username: string, lastname: string) {
     return supabase
       .from("user_info")
       .insert([
@@ -35,7 +35,7 @@ export function AuthProvider({ children }: any) {
       ])
       .single();
   }
-  function updatePlayer(
+  function updateUser(
     id: any,
     username: string,
     lastname: string,
@@ -83,8 +83,8 @@ export function AuthProvider({ children }: any) {
     singUp,
     login,
     logout,
-    addPlayer,
-    updatePlayer,
+    addUser,
+    updateUser,
   };
 
   return (
