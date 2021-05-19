@@ -8,6 +8,7 @@ import {
   Image,
   Dimensions,
   TouchableOpacity,
+  Button,
 } from "react-native";
 import { useAuth } from "../context/auth";
 import icon from "../../assets/keybyt-logo.png";
@@ -49,7 +50,12 @@ export function Welcome() {
             <Text style={styles.buttonText}>Acessa sua conta</Text>
           </TouchableOpacity>
         </View>
-        <Text>{JSON.stringify(user)}</Text>
+        <Button
+          title="NewUser"
+          onPress={() => navigation.navigate("newUser")}
+        />
+        <Text>{!!user ? "true" : "false"}</Text>
+        <Text>{user?.email}</Text>
       </View>
     </SafeAreaView>
   );
@@ -97,13 +103,3 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
   },
 });
-
-
-/*
-adaptive-icon 1024 1024
-favicon 48 48
-icon 1024 1024
-splash 1284 2778
-
-
-*/

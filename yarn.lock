@@ -1687,6 +1687,12 @@
     "@babel/runtime" "^7.7.2"
     regenerator-runtime "^0.13.3"
 
+"@react-native-async-storage/async-storage@react-native-community/async-storage":
+  version "1.13.0"
+  resolved "https://codeload.github.com/react-native-community/async-storage/tar.gz/864c64bd0f6414c8959548ec237637a82b7faec3"
+  dependencies:
+    deep-assign "^3.0.0"
+
 "@react-native-community/cli-debugger-ui@^4.13.1":
   version "4.13.1"
   resolved "https://registry.yarnpkg.com/@react-native-community/cli-debugger-ui/-/cli-debugger-ui-4.13.1.tgz#07de6d4dab80ec49231de1f1fbf658b4ad39b32c"

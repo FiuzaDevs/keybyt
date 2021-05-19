@@ -50,9 +50,9 @@ export function SingUp() {
       if (error) {
         Alert.alert("Error no Login", error.message);
       }
-      if (!error) {
-        navigation.navigate("welcome");
-      }
+       if (!error) {
+         navigation.navigate("newUser");
+       }
       setLoading(false);
     }
     else{

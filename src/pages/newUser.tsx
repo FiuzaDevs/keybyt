@@ -1,58 +1,62 @@
-import React, { useState } from "react";
 import { useNavigation } from "@react-navigation/core";
+import React, { useState } from "react";
 import {
-  KeyboardAvoidingView,
-  Text,
   View,
+  Text,
   StyleSheet,
   Button,
-  TextInput,
-  Alert,
+  SafeAreaView,
+  KeyboardAvoidingView,
   Platform,
   TouchableWithoutFeedback,
   Keyboard,
+  TextInput,
+  TouchableOpacity,
+  Alert,
 } from "react-native";
+
 import { useAuth } from "../context/auth";
 import colors from "../styles/colors";
-import { TouchableOpacity } from "react-native-gesture-handler";
-import { SafeAreaView } from "react-native-safe-area-context";
 
-export function Login() {
-  const navigation = useNavigation();
+export function NewUser() {
+  const { user, addUser, userInfo }: any = useAuth();
 
-  const [isFocusedEmail, setIsFocusedEmail] = useState(false);
-  const [isFilledEmail, setIsFilledEmail] = useState(false);
   const [isFocused, setIsFocused] = useState(false);
   const [isFilled, setIsFilled] = useState(false);
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
+  const [isFocusedName, setIsFocusedName] = useState(false);
+  const [isFilledName, setIsFilledName] = useState(false);
+  const [username, setUsername] = useState("");
+  const [lastname, setLastname] = useState("");
   const [loading, setLoading] = useState(false);
 
-  const { user, login }: any = useAuth();
+  const navigation = useNavigation();
+  if (!!userInfo) {
+    return (
+      <View style={styles.container}>
+        <Text>Voce já cadastrou seu nome</Text>
+        <Text>{user?.id}</Text>
+        <Text>{JSON.stringify(userInfo)}</Text>
+        <Button
+          title="Voltar para a tela inicial"
+          onPress={() => [navigation.navigate("home")]}
+        />
+      </View>
+    );
+  }
+  const handleNewUser = async(username:string, lastname:string) =>{
+      setLoading(true);
+      const {data, error } = await addUser(username, lastname);
+      console.log(data);
+      console.log(error);
+      if (error) {
+        Alert.alert("Error na criação de usuario", error.message);
+      }
+      if (!error) {
+        navigation.navigate("home");
+      }
+      setLoading(false);
+  }
 
-  function handleInputBlur() {
-    setIsFocusedEmail(false);
-    setIsFilledEmail(!!email);
-  }
-  function handlerInputFocus() {
-    setIsFocusedEmail(true);
-  }
-  function handlerInputChange(value: string) {
-    setIsFilledEmail(!!value);
-    setEmail(value);
-  }
-
-  const handleLogin = async (email: string, password: string) => {
-    setLoading(true);
-    const { error, user } = await login(email,password);
-    if (error) {
-      Alert.alert("Error no Login", error.message);
-    }
-    if(!error){
-      navigation.navigate("home");
-    }
-    setLoading(false);
-  };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -64,21 +68,24 @@ export function Login() {
           <View style={styles.wrapper}>
             <View style={styles.formulario}>
               <View style={styles.header}>
-                <Text style={styles.title}>Iniciar sessão</Text>
-                <Text>{email+" "+password}</Text>
+                <Text style={styles.title}>Informe seu nome!</Text>
+                <Text>{user?.id}</Text>
               </View>
               <TextInput
                 style={[
                   styles.input,
-                  (isFocusedEmail || isFilledEmail) && {
+                  (isFocusedName || isFilledName) && {
                     borderColor: colors.green,
                   },
                 ]}
-                placeholder="Digite o email"
-                onBlur={handleInputBlur}
-                onFocus={handlerInputFocus}
-                onChangeText={handlerInputChange}
-                value={email}
+                placeholder="Digite o seu nome"
+                onBlur={() => [
+                  setIsFocusedName(false),
+                  setIsFilledName(!!username),
+                ]}
+                onFocus={() => setIsFilledName(true)}
+                onChangeText={(text) => setUsername(text)}
+                value={username}
                 autoCapitalize="none"
               />
               <TextInput
@@ -86,14 +93,12 @@ export function Login() {
                   styles.input,
                   (isFocused || isFilled) && { borderColor: colors.green },
                 ]}
-                placeholder="Digite a senha"
-                onBlur={() => [setIsFocused(false), setIsFilled(!!password)]}
+                placeholder="Digite o seu sobrenome"
+                onBlur={() => [setIsFocused(false), setIsFilled(!!lastname)]}
                 onFocus={() => setIsFilled(true)}
-                onChangeText={(text) => setPassword(text)}
+                onChangeText={(text) => setLastname(text)}
                 autoCorrect={false}
-                value={password}
-                textContentType="password"
-                secureTextEntry={true}
+                value={lastname}
                 autoCapitalize="none"
               />
               <View
@@ -107,21 +112,14 @@ export function Login() {
                 <TouchableOpacity
                   style={styles.button}
                   activeOpacity={0.7}
-                  onPress={() => handleLogin(email, password)}
+                  onPress={() => handleNewUser(username, lastname)}
                   disabled={loading}
                 >
-                  <Text style={styles.buttonText}> Acessar Conta</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                  style={styles.button}
-                  activeOpacity={0.7}
-                  onPress={() => navigation.goBack()}
-                  disabled={loading}
-                >
-                  <Text style={styles.buttonText}> Crie uma Conta! </Text>
+                  <Text style={styles.buttonText}> Avança</Text>
                 </TouchableOpacity>
               </View>
             </View>
+            <Text>{JSON.stringify(userInfo)}</Text>
           </View>
         </TouchableWithoutFeedback>
       </KeyboardAvoidingView>

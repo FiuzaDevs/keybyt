@@ -1,4 +1,5 @@
 import React, { useContext, useEffect, useState } from "react";
+import { Session, User } from "@supabase/supabase-js";
 import supabase from "../services/api";
 const AuthContext = React.createContext("");
 
@@ -7,7 +8,8 @@ export function useAuth() {
 }
 
 export function AuthProvider({ children }: any) {
-  const [user, setUser] = useState<any>();
+  const [session, setSession] = useState<Session | null>(null);
+  const [user, setUser] = useState<User | any>(null);
   const [userInfo, setUserInfo] = useState<any>();
   const [loading, setLoading] = useState(true);
 
@@ -28,38 +30,39 @@ export function AuthProvider({ children }: any) {
       .insert([
         {
           user_id: user.id,
-          name: username,
-          lastname: lastname,
+          user_name: username,
+          user_lastname: lastname,
+          user_nickname:username,
           is_active: true,
         },
       ])
       .single();
   }
-  function updateUser(
-    id: any,
-    username: string,
-    lastname: string,
-  ) {
+  function updateUser(id: any, username: string, lastname: string) {
     return supabase
       .from("user_info")
       .update({
-        name: username,
-        lastname: lastname
+        user_name: username,
+        user_lastname: lastname,
       })
-      .match({ id: id });
+      .eq("id", id);
   }
 
   useEffect(() => {
     const session = supabase.auth.session();
+    setSession(session);
     setUser(session?.user ?? null);
-
     const { data: authListener } = supabase.auth.onAuthStateChange(
       async (event, session) => {
-        const currentUser = session?.user;
-        setUser(currentUser);
+        console.log(`Supabase auth event: ${event}`);
+        setSession(session);
+        setUser(session?.user ?? null);
       }
     );
-    fetchUser();
+    if (!!user) {
+      fetchUser();
+    }
+
     setLoading(false);
     return () => {
       authListener?.unsubscribe();
@@ -69,8 +72,8 @@ export function AuthProvider({ children }: any) {
   const fetchUser = async () => {
     let { data: user_info, error } = await supabase
       .from("user_info")
-      .select("*");
-    //.eq("user_id", user.id);
+      .select("*")
+      .eq("user_id", user.id);
     if (error) {
       console.log("error", error.message);
     }
@@ -85,6 +88,7 @@ export function AuthProvider({ children }: any) {
     logout,
     addUser,
     updateUser,
+    loading,
   };
 
   return (
