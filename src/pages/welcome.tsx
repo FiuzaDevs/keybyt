@@ -54,7 +54,14 @@ export function Welcome() {
           title="NewUser"
           onPress={() => navigation.navigate("newUser")}
         />
-        <Text>{!!user ? "true" : "false"}</Text>
+        {!!user ? (
+          <Button
+            title="NewUser"
+            onPress={() => navigation.navigate("newUser")}
+          />
+        ) : (
+          <Text>Falso</Text>
+        )}
         <Text>{user?.email}</Text>
       </View>
     </SafeAreaView>

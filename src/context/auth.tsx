@@ -1,6 +1,8 @@
 import React, { useContext, useEffect, useState } from "react";
 import { Session, User } from "@supabase/supabase-js";
-import supabase from "../services/api";
+import {supabase} from "../services/api";
+import "react-native-url-polyfill/auto"; // yarn add react-native-url-polyfill
+// Nunca esuqece de impora!!
 const AuthContext = React.createContext("");
 
 export function useAuth() {
@@ -9,9 +11,39 @@ export function useAuth() {
 
 export function AuthProvider({ children }: any) {
   const [session, setSession] = useState<Session | null>(null);
-  const [user, setUser] = useState<User | any>(null);
+  const [user, setUser] = useState<any>(null);
   const [userInfo, setUserInfo] = useState<any>();
   const [loading, setLoading] = useState(true);
+
+  useEffect(() => {
+    const session = supabase.auth.session();
+    setSession(session);
+    setUser(session?.user ?? null);
+    const { data: authListener } = supabase.auth.onAuthStateChange(
+      async (event, session) => {
+        console.log(`Supabase auth event: ${event}`);
+        setSession(session);
+        setUser(session?.user ?? null);
+      }
+    );
+    fetchUser();
+
+    setLoading(false);
+    return () => {
+      authListener?.unsubscribe();
+    };
+  }, [user]);
+
+  
+  const fetchUser = async () => {
+    const { data: userInfo, error } = await supabase
+      .from("user_info")
+      .select("*");
+    if (error) {
+      console.log("error", error.message);
+    }
+    setUserInfo(userInfo!);
+  };
 
   function singUp(email: string, password: string) {
     return supabase.auth.signUp({ email, password });
@@ -27,58 +59,29 @@ export function AuthProvider({ children }: any) {
   function addUser(username: string, lastname: string) {
     return supabase
       .from("user_info")
-      .insert([
-        {
-          user_id: user.id,
-          user_name: username,
-          user_lastname: lastname,
-          user_nickname:username,
-          is_active: true,
-        },
-      ])
+      .insert(
+        [
+          {
+            user_id: user.id,
+            name: username,
+            lastname: lastname,
+            is_active: true,
+          },
+        ],
+        { returning: "minimal" }
+      )
       .single();
   }
   function updateUser(id: any, username: string, lastname: string) {
     return supabase
       .from("user_info")
       .update({
-        user_name: username,
-        user_lastname: lastname,
+        name: username,
+        lastname: lastname,
       })
       .eq("id", id);
   }
 
-  useEffect(() => {
-    const session = supabase.auth.session();
-    setSession(session);
-    setUser(session?.user ?? null);
-    const { data: authListener } = supabase.auth.onAuthStateChange(
-      async (event, session) => {
-        console.log(`Supabase auth event: ${event}`);
-        setSession(session);
-        setUser(session?.user ?? null);
-      }
-    );
-    if (!!user) {
-      fetchUser();
-    }
-
-    setLoading(false);
-    return () => {
-      authListener?.unsubscribe();
-    };
-  }, [user]);
-
-  const fetchUser = async () => {
-    let { data: user_info, error } = await supabase
-      .from("user_info")
-      .select("*")
-      .eq("user_id", user.id);
-    if (error) {
-      console.log("error", error.message);
-    }
-    setUserInfo(user_info);
-  };
 
   const value: any = {
     user,

@@ -1,5 +1,5 @@
 import { useNavigation } from "@react-navigation/core";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import {
   View,
   Text,
@@ -28,14 +28,17 @@ export function NewUser() {
   const [username, setUsername] = useState("");
   const [lastname, setLastname] = useState("");
   const [loading, setLoading] = useState(false);
+  
 
   const navigation = useNavigation();
   if (!!userInfo) {
     return (
-      <View style={styles.container}>
+      <View style={styles.containerOFF}>
         <Text>Voce já cadastrou seu nome</Text>
-        <Text>{user?.id}</Text>
-        <Text>{JSON.stringify(userInfo)}</Text>
+        <Text>{user?.email}</Text>
+        {userInfo?.map((data: any) => {
+          return <Text key={data.id}>{data.name + " " + data.lastname}</Text>;
+        })}
         <Button
           title="Voltar para a tela inicial"
           onPress={() => [navigation.navigate("home")]}
@@ -43,20 +46,19 @@ export function NewUser() {
       </View>
     );
   }
-  const handleNewUser = async(username:string, lastname:string) =>{
-      setLoading(true);
-      const {data, error } = await addUser(username, lastname);
-      console.log(data);
-      console.log(error);
-      if (error) {
-        Alert.alert("Error na criação de usuario", error.message);
-      }
-      if (!error) {
-        navigation.navigate("home");
-      }
-      setLoading(false);
-  }
-
+  const handleNewUser = async (username: string, lastname: string) => {
+    setLoading(true);
+    const { data: userInfo, error } = await addUser(username, lastname);
+    console.log(userInfo);
+    console.log(error);
+    if (error) {
+      Alert.alert("Error na criação de usuario", error.message);
+    }
+    if (!error) {
+      navigation.navigate("home");
+    }
+    setLoading(false);
+  };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -130,9 +132,17 @@ export function NewUser() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
+    alignItems: "center",
+    justifyContent: "space-evenly",
+    padding: 40,
+    backgroundColor: colors.blue_white,
+  },
+  containerOFF: {
+    flex: 1,
     width: "100%",
     alignItems: "center",
-    justifyContent: "space-around",
+    justifyContent: "center",
+    padding: 10,
     backgroundColor: colors.blue_white,
   },
   wrapper: {
