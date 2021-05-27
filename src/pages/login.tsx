@@ -47,10 +47,10 @@ export function Login() {
     const { error, user } = await login(email,password);
     if (error) {
       Alert.alert("Error no Login", error.message);
-    }
+    }/*
     if(!error){
       navigation.navigate("home");
-    }
+    }*/
     setLoading(false);
   };
 
@@ -65,61 +65,65 @@ export function Login() {
             <View style={styles.formulario}>
               <View style={styles.header}>
                 <Text style={styles.title}>Iniciar sessão</Text>
-                <Text>{email+" "+password}</Text>
               </View>
-              <TextInput
-                style={[
-                  styles.input,
-                  (isFocusedEmail || isFilledEmail) && {
-                    borderColor: colors.green,
-                  },
-                ]}
-                placeholder="Digite o email"
-                onBlur={handleInputBlur}
-                onFocus={handlerInputFocus}
-                onChangeText={handlerInputChange}
-                value={email}
-                autoCapitalize="none"
-              />
-              <TextInput
-                style={[
-                  styles.input,
-                  (isFocused || isFilled) && { borderColor: colors.green },
-                ]}
-                placeholder="Digite a senha"
-                onBlur={() => [setIsFocused(false), setIsFilled(!!password)]}
-                onFocus={() => setIsFilled(true)}
-                onChangeText={(text) => setPassword(text)}
-                autoCorrect={false}
-                value={password}
-                textContentType="password"
-                secureTextEntry={true}
-                autoCapitalize="none"
-              />
-              <View
-                style={{
-                  marginTop: 40,
-                  width: "100%",
-                  paddingHorizontal: 20,
-                  alignItems: "center",
-                }}
-              >
-                <TouchableOpacity
-                  style={styles.button}
-                  activeOpacity={0.7}
-                  onPress={() => handleLogin(email, password)}
-                  disabled={loading}
+              <View style={styles.dados}>
+                <TextInput
+                  style={[
+                    styles.input,
+                    (isFocusedEmail || isFilledEmail) && {
+                      borderColor: colors.green,
+                    },
+                  ]}
+                  placeholder="Digite o email"
+                  onBlur={handleInputBlur}
+                  onFocus={handlerInputFocus}
+                  onChangeText={handlerInputChange}
+                  value={email}
+                  autoCapitalize="none"
+                />
+                <TextInput
+                  style={[
+                    styles.input,
+                    (isFocused || isFilled) && { borderColor: colors.green },
+                  ]}
+                  placeholder="Digite a senha"
+                  onBlur={() => [setIsFocused(false), setIsFilled(!!password)]}
+                  onFocus={() => setIsFilled(true)}
+                  onChangeText={(text) => setPassword(text)}
+                  autoCorrect={false}
+                  value={password}
+                  textContentType="password"
+                  secureTextEntry={true}
+                  autoCapitalize="none"
+                />
+                <View
+                  style={{
+                    marginTop: 40,
+                    width: "100%",
+                    paddingHorizontal: 20,
+                    alignItems: "center",
+                  }}
                 >
-                  <Text style={styles.buttonText}> Acessar Conta</Text>
-                </TouchableOpacity>
-                <TouchableOpacity
-                  style={styles.button}
-                  activeOpacity={0.7}
-                  onPress={() => navigation.goBack()}
-                  disabled={loading}
-                >
-                  <Text style={styles.buttonText}> Crie uma Conta! </Text>
-                </TouchableOpacity>
+                  <TouchableOpacity
+                    style={styles.button}
+                    activeOpacity={0.7}
+                    onPress={() => handleLogin(email, password)}
+                    disabled={loading}
+                  >
+                    <Text style={styles.buttonText}> Acessar Conta</Text>
+                  </TouchableOpacity>
+                  <Text style={styles.subtitle}>
+                    Não tem Conta? Crie agora!
+                  </Text>
+                  <TouchableOpacity
+                    style={styles.button}
+                    activeOpacity={0.7}
+                    onPress={() => navigation.goBack()}
+                    disabled={loading}
+                  >
+                    <Text style={styles.buttonText}> Crie uma Conta! </Text>
+                  </TouchableOpacity>
+                </View>
               </View>
             </View>
           </View>
@@ -136,6 +140,13 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "space-around",
     backgroundColor: colors.blue_white,
+  },
+  dados: {
+    borderRadius: 25,
+    width: "100%",
+    margin: 5,
+    padding: 7,
+    backgroundColor: colors.gray_white,
   },
   wrapper: {
     flex: 1,
@@ -177,5 +188,11 @@ const styles = StyleSheet.create({
   },
   header: {
     alignItems: "center",
+  },
+  subtitle: {
+    color: "gray",
+    fontWeight: "bold",
+    marginTop: 20,
+    fontSize: 16,
   },
 });

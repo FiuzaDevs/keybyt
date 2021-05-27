@@ -1,36 +1,54 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { NavigationContainer } from "@react-navigation/native";
-import { createStackNavigator } from "@react-navigation/stack";
-import { AuthProvider, useAuth } from "../context/auth";
-import AppLoading from "expo-app-loading";
+import { AuthProvider } from "../context/auth";
+import { DeviceProvider } from "../context/device";
 // https://reactnavigation.org/docs/getting-started
 // yarn add @react-navigation/native
 
-import { Welcome } from "../pages/welcome";
-import { Login } from "../pages/login";
-import { SingUp } from "../pages/singUp";
-import { Home } from "../pages/home";
-import { NewUser } from "../pages/newUser";
-
-const stackRoutes = createStackNavigator();
+import { Session } from "@supabase/supabase-js";
+import { supabase } from "../services/api";
+import AuthRoute from "./auth.routes";
+import AppRoute from "./app.routes";
+import AppLoading from "expo-app-loading";
 
 function Routes() {
-  const { user, loading }: any = useAuth();
+  const [isSingIn, setIsSingIn] = useState<boolean>(false);
+  const [session, setSession] = useState<Session | null>(null);
+  const [loading, setLoading] = useState<boolean>(true);
+
+  useEffect(() => {
+    const session = supabase.auth.session();
+    setSession(session);
+    const { data: authListener } = supabase.auth.onAuthStateChange(
+      async (event, session) => {
+        setSession(session);
+      }
+    );
+    session?.user?.aud === "authenticated"
+      ? setIsSingIn(true)
+      : setIsSingIn(false);
+
+    setLoading(false);
+
+    return () => {
+      authListener?.unsubscribe();
+    };
+  }, [session]);
 
   if (loading) {
-    return <AppLoading />;
+    <AppLoading />;
   }
 
   return (
     <NavigationContainer>
       <AuthProvider>
-        <stackRoutes.Navigator headerMode="none">
-          <stackRoutes.Screen name="welcome" component={Welcome} />
-          <stackRoutes.Screen name="login" component={Login} />
-          <stackRoutes.Screen name="singUp" component={SingUp} />
-          <stackRoutes.Screen name="newUser" component={NewUser} />
-          <stackRoutes.Screen name="home" component={Home} />
-        </stackRoutes.Navigator>
+        {isSingIn ? (
+          <DeviceProvider>
+            <AppRoute />
+          </DeviceProvider>
+        ) : (
+          <AuthRoute />
+        )}
       </AuthProvider>
     </NavigationContainer>
   );

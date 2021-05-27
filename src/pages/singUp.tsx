@@ -20,14 +20,14 @@ import colors from "../styles/colors";
 export function SingUp() {
   const navigation = useNavigation();
 
-   const [isFocusedEmail, setIsFocusedEmail] = useState(false);
-   const [isFilledEmail, setIsFilledEmail] = useState(false);
-   const [isFocused, setIsFocused] = useState(false);
-   const [isFilled, setIsFilled] = useState(false);
-   const [email, setEmail] = useState("");
-   const [password, setPassword] = useState("");
-   const [passwordConfirm, setPasswordConfirm] = useState("");
-   const [loading, setLoading] = useState(false);
+  const [isFocusedEmail, setIsFocusedEmail] = useState(false);
+  const [isFilledEmail, setIsFilledEmail] = useState(false);
+  const [isFocused, setIsFocused] = useState(false);
+  const [isFilled, setIsFilled] = useState(false);
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
+  const [passwordConfirm, setPasswordConfirm] = useState("");
+  const [loading, setLoading] = useState(false);
 
   const { user, singUp }: any = useAuth();
 
@@ -43,20 +43,23 @@ export function SingUp() {
     setEmail(value);
   }
 
-  const handleSingUp = async (email: string, password: string, passwordConfirm:string) => {
-    if(password === passwordConfirm){
+  const handleSingUp = async (
+    email: string,
+    password: string,
+    passwordConfirm: string
+  ) => {
+    if (password === passwordConfirm) {
       setLoading(true);
       const { error, user } = await singUp(email, password);
       if (error) {
         Alert.alert("Error no Login", error.message);
       }
-       if (!error) {
-         navigation.navigate("newUser");
-       }
+      if (!error) {
+        navigation.navigate("newUser");
+      }
       setLoading(false);
-    }
-    else{
-       Alert.alert("Error a Criar conta", "Senha de confirmação diferente");
+    } else {
+      Alert.alert("Error a Criar conta", "Senha de confirmação diferente");
     }
   };
 
@@ -71,77 +74,84 @@ export function SingUp() {
             <View style={styles.formulario}>
               <View style={styles.header}>
                 <Text style={styles.title}>Crie a conta agora!</Text>
-                <Text>{email + " " + password}</Text>
               </View>
-              <TextInput
-                style={[
-                  styles.input,
-                  (isFocusedEmail || isFilledEmail) && {
-                    borderColor: colors.green,
-                  },
-                ]}
-                placeholder="Digite o email"
-                onBlur={handleInputBlur}
-                onFocus={handlerInputFocus}
-                onChangeText={handlerInputChange}
-                value={email}
-                autoCapitalize="none"
-              />
-              <TextInput
-                style={[
-                  styles.input,
-                  (isFocused || isFilled) && { borderColor: colors.green },
-                ]}
-                placeholder="Digite a senha"
-                onBlur={() => [setIsFocused(false), setIsFilled(!!password)]}
-                onFocus={() => setIsFilled(true)}
-                onChangeText={(text) => setPassword(text)}
-                autoCorrect={false}
-                value={password}
-                textContentType="password"
-                secureTextEntry={true}
-                autoCapitalize="none"
-              />
-              <TextInput
-                style={[
-                  styles.input,
-                  (isFocused || isFilled) && { borderColor: colors.green },
-                ]}
-                placeholder="Confirme a senha"
-                onBlur={() => [setIsFocused(false), setIsFilled(!!password)]}
-                onFocus={() => setIsFilled(true)}
-                onChangeText={(text) => setPasswordConfirm(text)}
-                autoCorrect={false}
-                value={passwordConfirm}
-                textContentType="password"
-                secureTextEntry={true}
-                autoCapitalize="none"
-              />
-              <View
-                style={{
-                  marginTop: 40,
-                  width: "100%",
-                  paddingHorizontal: 20,
-                  alignItems: "center",
-                }}
-              >
-                <TouchableOpacity
-                  style={styles.button}
-                  activeOpacity={0.7}
-                  onPress={() => handleSingUp(email, password, passwordConfirm)}
-                  disabled={loading}
+              <View style={styles.dados}>
+                <TextInput
+                  style={[
+                    styles.input,
+                    (isFocusedEmail || isFilledEmail) && {
+                      borderColor: colors.green,
+                    },
+                  ]}
+                  placeholder="Digite o email"
+                  onBlur={handleInputBlur}
+                  onFocus={handlerInputFocus}
+                  onChangeText={handlerInputChange}
+                  value={email}
+                  autoCorrect={false}
+                  textContentType="emailAddress"
+                  autoCapitalize="none"
+                />
+                <TextInput
+                  style={[
+                    styles.input,
+                    (isFocused || isFilled) && { borderColor: colors.green },
+                  ]}
+                  placeholder="Digite a senha"
+                  onBlur={() => [setIsFocused(false), setIsFilled(!!password)]}
+                  onFocus={() => setIsFilled(true)}
+                  onChangeText={(text) => setPassword(text)}
+                  autoCorrect={false}
+                  value={password}
+                  textContentType="password"
+                  secureTextEntry={true}
+                  autoCapitalize="none"
+                />
+                <TextInput
+                  style={[
+                    styles.input,
+                    (isFocused || isFilled) && { borderColor: colors.green },
+                  ]}
+                  placeholder="Confirme a senha"
+                  onBlur={() => [setIsFocused(false), setIsFilled(!!password)]}
+                  onFocus={() => setIsFilled(true)}
+                  onChangeText={(text) => setPasswordConfirm(text)}
+                  autoCorrect={false}
+                  value={passwordConfirm}
+                  textContentType="password"
+                  secureTextEntry={true}
+                  autoCapitalize="none"
+                />
+                <View
+                  style={{
+                    marginTop: 40,
+                    width: "100%",
+                    paddingHorizontal: 20,
+                    alignItems: "center",
+                  }}
                 >
-                  <Text style={styles.buttonText}> Crie uma Conta! </Text>
-                </TouchableOpacity>
-                <Text style={styles.subtitle} >Já Conta? acessa ela agora</Text>
-                <TouchableOpacity
-                  style={styles.button}
-                  activeOpacity={0.7}
-                  onPress={() => navigation.goBack()}
-                  disabled={loading}
-                >
-                  <Text style={styles.buttonText}> Acessar Conta</Text>
-                </TouchableOpacity>
+                  <TouchableOpacity
+                    style={styles.button}
+                    activeOpacity={0.7}
+                    onPress={() =>
+                      handleSingUp(email, password, passwordConfirm)
+                    }
+                    disabled={loading}
+                  >
+                    <Text style={styles.buttonText}> Crie uma Conta! </Text>
+                  </TouchableOpacity>
+                  <Text style={styles.subtitle}>
+                    Já Conta? acessa ela agora
+                  </Text>
+                  <TouchableOpacity
+                    style={styles.button}
+                    activeOpacity={0.7}
+                    onPress={() => navigation.goBack()}
+                    disabled={loading}
+                  >
+                    <Text style={styles.buttonText}> Acessar Conta</Text>
+                  </TouchableOpacity>
+                </View>
               </View>
             </View>
           </View>
@@ -168,6 +178,13 @@ const styles = StyleSheet.create({
     fontWeight: "bold",
     textAlign: "center",
     lineHeight: 42,
+  },
+  dados: {
+    borderRadius: 25,
+    width: "100%",
+    margin: 5,
+    padding: 7,
+    backgroundColor: colors.gray_white,
   },
   button: {
     backgroundColor: colors.blue_light,
@@ -200,10 +217,10 @@ const styles = StyleSheet.create({
   header: {
     alignItems: "center",
   },
-  subtitle:{
-    color:"gray",
-    fontWeight:'bold',
-    marginTop:20,
-    fontSize:16,
-  }
+  subtitle: {
+    color: "gray",
+    fontWeight: "bold",
+    marginTop: 20,
+    fontSize: 16,
+  },
 });

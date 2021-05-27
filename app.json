@@ -17,7 +17,11 @@
       "**/*"
     ],
     "ios": {
-      "supportsTablet": true
+      "supportsTablet": true,
+       "infoPlist": {
+        "infoPlist.NSFaceIDUsageDescription": true
+      }
+
     },
     "android": {
       "adaptiveIcon": {

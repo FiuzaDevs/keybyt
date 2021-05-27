@@ -1,11 +1,3 @@
-if (!process.env.SUPABASE_URL) {
-  console.log(
-    "constants.ts",
-    "Make sure you have a `.env` file to populate your variables."
-  );
-}
-
-export const SUPABASE_URL = process.env.REACT_NATIVE_SUPABASE_URL || "";
-export const SUPABASE_ANON_KEY =
-  process.env.REACT_NATIVE_SUPABASE_ANON_KEY || "";
+export const SUPABASE_URL = "https://vkaeuedswexyubwdmnwc.supabase.co";
+export const SUPABASE_ANON_KEY = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJyb2xlIjoiYW5vbiIsImlhdCI6MTYyMDE1NDQwNywiZXhwIjoxOTM1NzMwNDA3fQ.BrFriW7vKHEpU7jLQAS3QrNhcnOtVa87HiB7AzdOBTI";
 

@@ -16,7 +16,7 @@ import icon from "../../assets/keybyt-logo.png";
 import colors from "../styles/colors";
 
 export function Welcome() {
-  const { user }: any = useAuth();
+  const { userInfo, isSingIn }: any = useAuth();
 
   const navigation = useNavigation();
 
@@ -50,19 +50,7 @@ export function Welcome() {
             <Text style={styles.buttonText}>Acessa sua conta</Text>
           </TouchableOpacity>
         </View>
-        <Button
-          title="NewUser"
-          onPress={() => navigation.navigate("newUser")}
-        />
-        {!!user ? (
-          <Button
-            title="NewUser"
-            onPress={() => navigation.navigate("newUser")}
-          />
-        ) : (
-          <Text>Falso</Text>
-        )}
-        <Text>{user?.email}</Text>
+        <Text>{isSingIn ? "true": "false"}</Text>
       </View>
     </SafeAreaView>
   );

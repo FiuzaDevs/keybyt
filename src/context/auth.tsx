@@ -1,6 +1,6 @@
 import React, { useContext, useEffect, useState } from "react";
 import { Session, User } from "@supabase/supabase-js";
-import {supabase} from "../services/api";
+import { supabase } from "../services/api";
 import "react-native-url-polyfill/auto"; // yarn add react-native-url-polyfill
 // Nunca esuqece de impora!!
 const AuthContext = React.createContext("");
@@ -11,11 +11,12 @@ export function useAuth() {
 
 export function AuthProvider({ children }: any) {
   const [session, setSession] = useState<Session | null>(null);
-  const [user, setUser] = useState<any>(null);
-  const [userInfo, setUserInfo] = useState<any>();
+  const [user, setUser] = useState<User | null>(null);
+  const [userInfo, setUserInfo] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
+    setLoading(true);
     const session = supabase.auth.session();
     setSession(session);
     setUser(session?.user ?? null);
@@ -24,17 +25,15 @@ export function AuthProvider({ children }: any) {
         console.log(`Supabase auth event: ${event}`);
         setSession(session);
         setUser(session?.user ?? null);
+        fetchUser();
       }
     );
-    fetchUser();
-
     setLoading(false);
     return () => {
       authListener?.unsubscribe();
     };
-  }, [user]);
+  }, []);
 
-  
   const fetchUser = async () => {
     const { data: userInfo, error } = await supabase
       .from("user_info")
@@ -62,7 +61,7 @@ export function AuthProvider({ children }: any) {
       .insert(
         [
           {
-            user_id: user.id,
+            user_id: user?.id,
             name: username,
             lastname: lastname,
             is_active: true,
@@ -82,7 +81,6 @@ export function AuthProvider({ children }: any) {
       .eq("id", id);
   }
 
-
   const value: any = {
     user,
     userInfo,
@@ -91,7 +89,6 @@ export function AuthProvider({ children }: any) {
     logout,
     addUser,
     updateUser,
-    loading,
   };
 
   return (

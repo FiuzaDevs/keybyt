@@ -1,6 +1,6 @@
 import { useNavigation } from "@react-navigation/core";
 import React, { useEffect, useState } from "react";
-import { View, Text, StyleSheet, Button, Alert } from "react-native";
+import { View, Text, StyleSheet, Button, Alert, TouchableOpacity } from "react-native";
 import * as LocalAuthentication from "expo-local-authentication";
 
 import { useAuth } from "../context/auth";
@@ -61,7 +61,9 @@ export function Home() {
       </Text>
       <Text>{sucessBiometric ? "true" : "false"}</Text>
       <View>
-        {device.map()}
+        {device?.map((item: any) => {
+          <TouchableOpacity key={item?.id}>{device?.name}</TouchableOpacity>
+        })}
       </View>
       <Button title="Biometric" onPress={() => handleBiometricAuth()} />
 

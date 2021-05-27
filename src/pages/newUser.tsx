@@ -1,5 +1,5 @@
 import { useNavigation } from "@react-navigation/core";
-import React, { useEffect, useState } from "react";
+import React, { useState } from "react";
 import {
   View,
   Text,
@@ -19,7 +19,7 @@ import { useAuth } from "../context/auth";
 import colors from "../styles/colors";
 
 export function NewUser() {
-  const { user, addUser, userInfo }: any = useAuth();
+  const { addUser, userInfo }: any = useAuth();
 
   const [isFocused, setIsFocused] = useState(false);
   const [isFilled, setIsFilled] = useState(false);
@@ -28,34 +28,13 @@ export function NewUser() {
   const [username, setUsername] = useState("");
   const [lastname, setLastname] = useState("");
   const [loading, setLoading] = useState(false);
-  
 
-  const navigation = useNavigation();
-  if (!!userInfo) {
-    return (
-      <View style={styles.containerOFF}>
-        <Text>Voce já cadastrou seu nome</Text>
-        <Text>{user?.email}</Text>
-        {userInfo?.map((data: any) => {
-          return <Text key={data.id}>{data.name + " " + data.lastname}</Text>;
-        })}
-        <Button
-          title="Voltar para a tela inicial"
-          onPress={() => [navigation.navigate("home")]}
-        />
-      </View>
-    );
-  }
   const handleNewUser = async (username: string, lastname: string) => {
     setLoading(true);
     const { data: userInfo, error } = await addUser(username, lastname);
-    console.log(userInfo);
     console.log(error);
     if (error) {
       Alert.alert("Error na criação de usuario", error.message);
-    }
-    if (!error) {
-      navigation.navigate("home");
     }
     setLoading(false);
   };
@@ -71,7 +50,11 @@ export function NewUser() {
             <View style={styles.formulario}>
               <View style={styles.header}>
                 <Text style={styles.title}>Informe seu nome!</Text>
-                <Text>{user?.id}</Text>
+                {userInfo?.map((data: any) => {
+                  return (
+                    <Text key={data.id}>{data.name + " " + data.lastname}</Text>
+                  );
+                })}
               </View>
               <TextInput
                 style={[
@@ -121,7 +104,6 @@ export function NewUser() {
                 </TouchableOpacity>
               </View>
             </View>
-            <Text>{JSON.stringify(userInfo)}</Text>
           </View>
         </TouchableWithoutFeedback>
       </KeyboardAvoidingView>
