@@ -16,12 +16,12 @@ export function DeviceProvider({ children }: any) {
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    fetchDevice()
+    fetchDevice();
+    fetchControlUser();
     setLoading(false);
 
-    return function cleanup() {
-    };
-  }, []);
+    return function cleanup() {};
+  }, [user]);
 
   const fetchDevice = async () => {
     const { data: device, error } = await supabase
@@ -52,28 +52,30 @@ export function DeviceProvider({ children }: any) {
       .eq("id", id);
     if (error) {
       console.log("error", error.message);
-    }
+    }    
+    
     return data;
   }
 
   const fetchControlUser = async () => {
     const { data: controlUser, error } = await supabase
       .from("control_user")
-      .select("*")
+      .select("*,device_doors(door_name)")
       .eq("user_id", user?.id);
     if (error) {
       console.log("error", error.message);
     }
+    
     setControlUser(controlUser!);
   };
 
-  function addDevice(
+  async function addDevice(
     userID: string,
     name: string,
     acessKey: string,
     pin: number
   ) {
-    return supabase
+    return await supabase
       .from("control_user")
       .insert(
         [
@@ -86,7 +88,9 @@ export function DeviceProvider({ children }: any) {
         ],
         { returning: "minimal" }
       )
-      .single();
+      .single().then(()=>{
+        fetchDevice();
+      })
   }
   function addDeviceDoors(deviceId: string, name: string) {
     return supabase
