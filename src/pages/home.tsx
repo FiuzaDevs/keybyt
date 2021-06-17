@@ -9,6 +9,7 @@ import {
   TouchableOpacity,
   FlatList,
   Platform,
+  Modal,
 } from "react-native";
 import * as LocalAuthentication from "expo-local-authentication";
 import { Message, Client } from "paho-mqtt";
@@ -20,9 +21,10 @@ import { Header } from "../components/Header";
 import { ButtonTouch } from "../components/ButtonTouch";
 
 export function Home() {
-  const { userInfo, logout }: any = useAuth();
+  const { logout }: any = useAuth();
   const { device, controlUser }: any = useDevice();
   const [callMensage, setCallMensage] = useState("nada");
+  const [modalVisible, setModalVisible] = useState(false);
 
   const controlUserObject = JSON.parse(JSON.stringify(controlUser)) || [0];
   const deviceObject = JSON.parse(JSON.stringify(device)) || [0];
@@ -33,8 +35,8 @@ export function Home() {
 
   // Create a client instance
   const clientMQTT = new Client(
-    "broker.mqttdashboard.com",
-    Number(8000),
+    "test.mosquitto.org",
+    Number(8080),
     "clientId-9DDYtvlB5o"
   );
 
@@ -58,19 +60,24 @@ export function Home() {
     setCallMensage(message.payloadString);
   }
 
-  function EnviarMensagem(mensagem: string) {
+  function EnviarMensagem(mensagem: string, topico: string) {
     let message = new Message(mensagem);
-    message.destinationName = "testetccexpo/teste";
-    clientMQTT.connect({ onSuccess: sendMessage, cleanSession: true });
+    message.destinationName = `MQTTkeybytEnvia/${topico}`;
+    clientMQTT.connect({ onSuccess: sendMessage });
     function sendMessage() {
       console.log(message);
-      clientMQTT.subscribe("testetccexpo/teste");
+      clientMQTT.subscribe(`MQTTkeybytRecebe/${topico}`);
       clientMQTT.send(message);
-      clientMQTT.disconnect();
     }
   }
 
-  const handleBiometricAuth = async (id: number, name: string) => {
+  const handleBiometricAuth = async (
+    id: number,
+    name: string,
+    access: string
+  ) => {
+    console.log(access);
+
     try {
       // Checking if device is compatible
       const isCompatible = await LocalAuthentication.hasHardwareAsync();
@@ -86,7 +93,8 @@ export function Home() {
 
       if (!isEnrolled) {
         throw new Error(
-          "Nenhum biometria cadastrada. Por favor registre a biometria usando as configurações do celular"
+          "Nenhum biometria cadastrada." +
+            "Por favor registre a biometria usando as configurações do celular"
         );
       }
 
@@ -99,8 +107,8 @@ export function Home() {
         ).success
       ) {
         setCallMensage("espera");
-        let mensagem = id + name.replace(/\s/g, "");
-        EnviarMensagem(mensagem);
+        let mensagem = id.toString();
+        EnviarMensagem(mensagem, access);
       }
     } catch (error) {
       Alert.alert("An error as occured", error?.message);
@@ -114,6 +122,14 @@ export function Home() {
         <Text style={styles.title}>Algum titulo</Text>
         <Text style={styles.subtitle}>Algum subtitulo?</Text>
       </View>
+      <Modal
+        animationType="slide"
+        visible={modalVisible}
+        transparent={true}
+        onRequestClose={() => {
+          setModalVisible(!modalVisible);
+        }}
+      ></Modal>
 
       <View style={styles.listaButton}>
         <Text style={styles.title}>Seus dispotivos</Text>
@@ -133,7 +149,11 @@ export function Home() {
               key={item?.id}
               title={item?.device_doors?.door_name}
               onPress={() =>
-                handleBiometricAuth(item.id, item?.device_doors?.door_name)
+                handleBiometricAuth(
+                  item.id,
+                  item?.device_doors?.door_name,
+                  item.device_doors.devices.access_key
+                )
               }
             />
           )}
@@ -186,9 +206,3 @@ const styles = StyleSheet.create({
     margin: 2,
   },
 });
-/* {controlUserObject?.map((item: any) => {
-          return (
-            <ButtonTouch key={item?.id} title={item?.device_doors?.door_name} />
-          );
-        })}
-        */

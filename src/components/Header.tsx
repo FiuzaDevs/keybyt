@@ -1,10 +1,9 @@
 import React from "react";
 import { StyleSheet, Text, View, Image } from "react-native";
+import { useAuth } from "../context/auth";
 
-import { getStatusBarHeight } from "react-native-iphone-x-helper";
 import colors from "../styles/colors";
 import userImg from "../../assets/adaptive-icon.png";
-import { useAuth } from "../context/auth";
 
 export function Header() {
   const { userInfo, logout }: any = useAuth();

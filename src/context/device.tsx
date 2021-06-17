@@ -31,7 +31,7 @@ export function DeviceProvider({ children }: any) {
     if (error) {
       console.log("error", error.message);
     }
-    setDevice(device!);
+    setDevice(device);
   };
 
   async function fetchDeviceID(id: number) {
@@ -60,13 +60,14 @@ export function DeviceProvider({ children }: any) {
   const fetchControlUser = async () => {
     const { data: controlUser, error } = await supabase
       .from("control_user")
-      .select("*,device_doors(door_name)")
+      .select("*,device_doors(door_name, devices:device_id(access_key))")
       .eq("user_id", user?.id);
     if (error) {
       console.log("error", error.message);
     }
+    console.log(controlUser);
     
-    setControlUser(controlUser!);
+    setControlUser(controlUser);
   };
 
   async function addDevice(
