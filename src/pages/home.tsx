@@ -115,12 +115,21 @@ export function Home() {
     }
   };
 
+  const EmptyListMessage = () => {
+    return (
+      // Flat List Item
+      <Text style={styles.emptyList}>
+        Você não tem nenhuma porta cadastrada
+      </Text>
+    );
+  };
+
   return (
     <View style={styles.container}>
       <View style={styles.header}>
         <Header />
-        <Text style={styles.title}>Algum titulo</Text>
-        <Text style={styles.subtitle}>Algum subtitulo?</Text>
+        <Text style={styles.title}>Abrir de porta</Text>
+        <Text style={styles.subtitle}>Em um clique</Text>
       </View>
       <Modal
         animationType="slide"
@@ -133,9 +142,15 @@ export function Home() {
 
       <View style={styles.listaButton}>
         <Text style={styles.title}>Seus dispotivos</Text>
-        {deviceObject?.map((item: any) => {
-          return <ButtonTouch key={item?.id} title={item?.name} />;
-        })}
+        {deviceObject === undefined || deviceObject.length == 0 ? (
+          <Text style={styles.emptyList}>
+            Você não tem nenhum dispositivo cadastrado
+          </Text>
+        ) : (
+          deviceObject?.map((item: any) => {
+            return <ButtonTouch key={item?.id} title={item?.name} />;
+          })
+        )}
       </View>
       <View>
         <Text style={styles.title}>Suas portas</Text>
@@ -144,6 +159,7 @@ export function Home() {
           horizontal={true}
           style={{ maxHeight: 65 }}
           contentContainerStyle={styles.enviromentList}
+          ListEmptyComponent={EmptyListMessage}
           renderItem={({ item }) => (
             <ButtonTouch
               key={item?.id}
@@ -158,9 +174,6 @@ export function Home() {
             />
           )}
         />
-      </View>
-      <View>
-        <Text>{callMensage}</Text>
       </View>
 
       <ButtonTouch title="Logout" onPress={() => logout()} />
@@ -184,7 +197,7 @@ const styles = StyleSheet.create({
   title: {
     fontSize: 20,
     lineHeight: 22,
-    marginTop: 15,
+    marginTop: 5,
     marginBottom: 5,
     alignSelf: "center",
   },
@@ -204,5 +217,10 @@ const styles = StyleSheet.create({
     justifyContent: "center",
     paddingBottom: 5,
     margin: 2,
+  },
+  emptyList: {
+    fontSize: 14,
+    alignSelf: "center",
+    fontStyle: "italic",
   },
 });
