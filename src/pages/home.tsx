@@ -148,7 +148,20 @@ export function Home() {
           </Text>
         ) : (
           deviceObject?.map((item: any) => {
-            return <ButtonTouch key={item?.id} title={item?.name} />;
+            return (
+              <ButtonTouch
+                key={item?.id}
+                title={item?.name}
+                onPress={() =>
+                  navigation.navigate("deviceDetails", {
+                    device: {
+                      id: item?.id,
+                      name: item?.name,
+                    },
+                  })
+                }
+              />
+            );
           })
         )}
       </View>

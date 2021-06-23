@@ -4,6 +4,7 @@ import { Home } from "../pages/home";
 import { useAuth } from "../context/auth";
 import { NewUser } from "../pages/newUser";
 import AppLoading from "expo-app-loading";
+import { deviceDetails } from "../pages/deviceDetails";
 // https://reactnavigation.org/docs/getting-started
 // yarn add @react-navigation/native
 
@@ -33,7 +34,10 @@ const AppRoute: React.FC = () => {
       screenOptions={{ animationTypeForReplace: "pop" }}
     >
       {!userObject ? (
-        <stackRoutes.Screen name="home" component={Home} />
+        <>
+          <stackRoutes.Screen name="home" component={Home} />
+          <stackRoutes.Screen name="deviceDetails" component={deviceDetails} />
+        </>
       ) : (
         <stackRoutes.Screen name="newUser" component={NewUser} />
       )}
